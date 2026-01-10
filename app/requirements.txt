@@ -1,0 +1,6 @@
+streamlit
+streamlit-mic-recorder
+ollama
+gTTS
+openai-whisper
+setuptools-rust
