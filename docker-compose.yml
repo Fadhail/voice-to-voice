@@ -1,5 +1,4 @@
 services:
-  # 1. Image Resmi Ollama (Back-end AI)
   ollama_service:
     image: ollama/ollama:latest
     container_name: ollama_service
@@ -14,7 +13,6 @@ services:
         limits:
           memory: 5G
 
-  # 2. Image Custom Python (Front-end Web UI)
   v2v_web_app:
     build: 
       context: .

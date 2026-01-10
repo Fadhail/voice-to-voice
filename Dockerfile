@@ -1,6 +1,5 @@
 FROM python:3.9-slim
 
-# Install dependencies sistem (FFmpeg tetap perlu di-install)
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     build-essential \
@@ -8,17 +7,19 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# --- KUNCI OPTIMASI ---
-# Salin hanya requirements dulu
 COPY app/requirements.txt .
 
-# Install requirements. Docker akan menyimpan (cache) layer ini.
-# Selama isi file requirements.txt tidak berubah, Docker tidak akan download ulang.
-RUN pip install --no-cache-dir -r requirements.txt
+RUN python -m venv /opt/venv
 
-# Baru salin sisa file codingan (main.py, dll)
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="/opt/venv/bin:${PATH}"
+ENV PIP_DEFAULT_TIMEOUT=120
+
+RUN /opt/venv/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/venv/bin/pip install --no-cache-dir --timeout 120 --retries 5 -r requirements.txt
+
 COPY app/ .
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["/opt/venv/bin/python", "-m", "streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]
