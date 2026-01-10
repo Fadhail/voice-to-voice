@@ -1,6 +1,6 @@
 FROM python:3.9-slim
 
-# Install dependencies sistem (FFmpeg sangat penting untuk Whisper)
+# Install dependencies sistem (FFmpeg tetap perlu di-install)
 RUN apt-get update && apt-get install -y \
     ffmpeg \
     build-essential \
@@ -8,14 +8,17 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy requirements dan install library python
+# --- KUNCI OPTIMASI ---
+# Salin hanya requirements dulu
 COPY app/requirements.txt .
+
+# Install requirements. Docker akan menyimpan (cache) layer ini.
+# Selama isi file requirements.txt tidak berubah, Docker tidak akan download ulang.
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy seluruh file aplikasi
+# Baru salin sisa file codingan (main.py, dll)
 COPY app/ .
 
-# Ekspos port Streamlit
 EXPOSE 8501
 
 CMD ["streamlit", "run", "main.py", "--server.port=8501", "--server.address=0.0.0.0"]

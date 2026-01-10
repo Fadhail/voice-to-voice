@@ -2,11 +2,12 @@ import streamlit as st
 from streamlit_mic_recorder import mic_recorder
 import ollama
 import json
-from gtts import gTTS
 import io
 import os
 import whisper
 import tempfile
+import asyncio
+import edge_tts
 
 st.set_page_config(page_title="Voice-to-Voice", layout="wide")
 
@@ -28,16 +29,33 @@ def load_knowledge_base():
 stt_model = load_whisper_model()
 data_context = load_knowledge_base()
 
+async def generate_edge_tts(text, voice, rate):
+    speed = f"+{rate}%" if rate >= 0 else f"{rate}%"
+    communicate = edge_tts.Communicate(text, voice, rate=speed)
+    audio_data = b""
+    async for chunk in communicate.stream():
+        if chunk["type"] == "audio":
+            audio_data += chunk["data"]
+    return audio_data
+
 with st.sidebar:
     st.header("Model Settings")
-    selected_model = st.selectbox(
-        "Model",
-        ["llama3.2", "mistral", "phi3"],
-        help="Pastikan model sudah di-pull di container Ollama"
-    )
+    selected_model = st.selectbox("Model", ["llama3.2"])
     temp = st.slider("Temperature", 0.0, 2.0, 0.0, 0.1)
     max_tokens = st.slider("Output token limit", 1, 8192, 512)
     top_p = st.slider("Top-P", 0.0, 1.0, 0.9, 0.05)
+    
+    st.divider()
+    st.header("Voice Settings")
+    
+    voice_option = st.selectbox(
+        "Pilih Suara",
+        ["id-ID-ArdiNeural (Pria)", "id-ID-GadisNeural (Wanita)"],
+        index=1
+    )
+    selected_voice = voice_option.split(" ")[0]
+    
+    voice_speed = st.slider("Kecepatan Suara (%)", -50, 100, 25, step=5)
     
     st.divider()
     if st.button("Hapus Riwayat Chat"):
@@ -48,18 +66,13 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 st.title("Voice-to-Voice")
-st.write("Silakan klik tombol di bawah dan bicaralah untuk bertanya tentang data siswa.")
+st.write("Tanya data siswa dengan suara yang lebih natural dan cepat.")
 
 for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.write(msg["content"])
 
-# --- PROSES INPUT SUARA ---
-audio = mic_recorder(
-    start_prompt="Mulai Bicara 🎤",
-    stop_prompt="Selesai & Proses ⏹️",
-    key='recorder'
-)
+audio = mic_recorder(start_prompt="Mulai Bicara 🎤", stop_prompt="Selesai & Proses ⏹️", key='recorder')
 
 if audio:
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
@@ -81,25 +94,17 @@ if audio:
                     response = client.chat(
                         model=selected_model,
                         messages=[
-                            {
-                                'role': 'system', 
-                                'content': f'Anda adalah asisten data siswa. Jawab HANYA berdasarkan data ini: {data_context}. Jika tidak ada, katakan maaf.'
-                            },
+                            {'role': 'system', 'content': f'Anda asisten data siswa. Jawab HANYA berdasarkan data ini: {data_context}.'},
                             {'role': 'user', 'content': user_query}
                         ],
-                        options={
-                            'temperature': temp,
-                            'num_predict': max_tokens,
-                            'top_p': top_p
-                        }
+                        options={'temperature': temp, 'num_predict': max_tokens, 'top_p': top_p}
                     )
                     answer = response['message']['content']
                     st.write(answer)
 
-                    tts = gTTS(text=answer, lang='id')
-                    audio_fp = io.BytesIO()
-                    tts.write_to_fp(audio_fp)
-                    st.audio(audio_fp, format="audio/mp3", autoplay=True)
+                    with st.spinner("Menghasilkan suara..."):
+                        audio_bytes = asyncio.run(generate_edge_tts(answer, selected_voice, voice_speed))
+                        st.audio(audio_bytes, format="audio/mp3", autoplay=True)
 
                     st.session_state.messages.append({"role": "assistant", "content": answer})
 

@@ -4,3 +4,4 @@ ollama
 gTTS
 openai-whisper
 setuptools-rust
+edge-tts

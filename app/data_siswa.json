@@ -12,5 +12,95 @@
     },
     "gaya_belajar": "Visual–Kinestetik",
     "feedback": "Andi memiliki motivasi intrinsik tinggi dan cocok dengan pembelajaran berbasis proyek serta media visual."
+  },
+
+  "budi": {
+    "ams": {
+      "intrinsic": 60,
+      "extrinsic": 70,
+      "amotivation": 40
+    },
+    "mslq": {
+      "motivasi": 65,
+      "strategi_belajar": 68,
+      "self_regulation": 62
+    },
+    "gaya_belajar": "Auditori",
+    "feedback": "Budi menunjukkan motivasi ekstrinsik yang lebih tinggi dan belajar lebih baik melalui diskusi dan penjelasan lisan."
+  },
+
+  "citra": {
+    "ams": {
+      "intrinsic": 90,
+      "extrinsic": 60,
+      "amotivation": 15
+    },
+    "mslq": {
+      "motivasi": 88,
+      "strategi_belajar": 85,
+      "self_regulation": 90
+    },
+    "gaya_belajar": "Visual",
+    "feedback": "Citra sangat termotivasi secara intrinsik dan merespons baik terhadap materi pembelajaran yang kaya visual."
+  },
+
+  "dina": {
+    "ams": {
+      "intrinsic": 55,
+      "extrinsic": 75,
+      "amotivation": 45
+    },
+    "mslq": {
+      "motivasi": 60,
+      "strategi_belajar": 65,
+      "self_regulation": 58
+    },
+    "gaya_belajar": "Kinestetik",
+    "feedback": "Dina memiliki motivasi ekstrinsik yang lebih tinggi dan belajar paling efektif melalui aktivitas fisik dan praktik langsung."
+  },
+  
+  "eko": {
+    "ams": {
+      "intrinsic": 70,
+      "extrinsic": 65,
+      "amotivation": 30
+    },
+    "mslq": {
+      "motivasi": 72,
+      "strategi_belajar": 70,
+      "self_regulation": 75
+    },
+    "gaya_belajar": "Auditori–Visual",
+    "feedback": "Eko memiliki keseimbangan antara motivasi intrinsik dan ekstrinsik, serta belajar efektif melalui kombinasi penjelasan lisan dan materi visual."
+  },
+
+  "fina": {
+    "ams": {
+      "intrinsic": 95,
+      "extrinsic": 55,
+      "amotivation": 10
+    },
+    "mslq": {
+      "motivasi": 90,
+      "strategi_belajar": 88,
+      "self_regulation": 92
+    },
+    "gaya_belajar": "Visual",
+    "feedback": "Fina sangat termotivasi secara intrinsik dan menunjukkan preferensi kuat terhadap pembelajaran berbasis visual."
+  },
+
+  "gilang": {
+    "ams": {
+      "intrinsic": 50,
+      "extrinsic": 80,
+      "amotivation": 50
+    },
+    "mslq": {
+      "motivasi": 55,
+      "strategi_belajar": 60,
+      "self_regulation": 57
+    },
+    "gaya_belajar": "Kinestetik–Auditori",
+    "feedback": "Gilang memiliki motivasi ekstrinsik yang lebih tinggi dan belajar paling baik melalui aktivitas fisik serta diskusi lisan."
   }
 }
