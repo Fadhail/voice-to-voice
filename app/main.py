@@ -11,7 +11,7 @@ import edge_tts
 
 st.set_page_config(page_title="Voice-to-Voice", layout="wide")
 
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://ollama_service:11434")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://ollama-api:11434")
 client = ollama.Client(host=OLLAMA_HOST)
 
 @st.cache_resource

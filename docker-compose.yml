@@ -1,41 +1,18 @@
 services:
-  ollama_service:
-    image: ollama/ollama:latest
-    container_name: ollama_service
-    ports:
-      - "11434:11434"
-    volumes:
-      - ollama_data:/root/.ollama
-    networks:
-      - ai-network
-    deploy:
-      resources:
-        limits:
-          memory: 5G
-
   v2v_web_app:
     build: 
       context: .
       dockerfile: Dockerfile
-    container_name: python_v2v_web
-    depends_on:
-      - ollama_service
-    ports:
-      - "8501:8501"
     environment:
-      - OLLAMA_HOST=http://ollama_service:11434 # Pointing ke nama service di atas
+      - OLLAMA_HOST=http://ollama-api:11434
     volumes:
       - ./app:/app
     networks:
-      - ai-network
+      - internal-shared
     deploy:
       resources:
         limits:
           memory: 2G
 
 networks:
-  ai-network:
-    driver: bridge
-
-volumes:
-  ollama_data:
+  internal-shared:
