@@ -1,6 +1,7 @@
 streamlit
 streamlit-mic-recorder
 ollama
+requests
 gTTS
 openai-whisper
 setuptools-rust

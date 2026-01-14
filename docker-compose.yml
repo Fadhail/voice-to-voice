@@ -3,6 +3,8 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
+    environment:
+      - OLLAMA_HOST=https://ollama.irc-enter.tech
     networks:
       - internal-shared
     deploy:

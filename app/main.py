@@ -11,7 +11,7 @@ import edge_tts
 
 st.set_page_config(page_title="Voice-to-Voice", layout="wide")
 
-OLLAMA_HOST = os.getenv("OLLAMA_HOST", "http://ollama-api:11434")
+OLLAMA_HOST = os.getenv("OLLAMA_HOST", "https://ollama.irc-enter.tech")
 client = ollama.Client(host=OLLAMA_HOST)
 
 @st.cache_resource
@@ -25,6 +25,19 @@ def load_knowledge_base():
             return json.dumps(json.load(f))
     except FileNotFoundError:
         return "{}"
+
+@st.cache_data
+def get_available_models():
+    try:
+        import requests
+        response = requests.get(f"{OLLAMA_HOST}/api/tags", timeout=5)
+        if response.status_code == 200:
+            models = response.json().get('models', [])
+            return [model['name'] for model in models] if models else ["llama3.2"]
+        return ["llama3.2"]
+    except Exception as e:
+        st.warning(f"Tidak bisa fetch models: {e}")
+        return ["llama3.2"]
 
 stt_model = load_whisper_model()
 data_context = load_knowledge_base()
@@ -40,7 +53,8 @@ async def generate_edge_tts(text, voice, rate):
 
 with st.sidebar:
     st.header("Model Settings")
-    selected_model = st.selectbox("Model", ["llama3.2"])
+    available_models = get_available_models()
+    selected_model = st.selectbox("Model", available_models)
     temp = st.slider("Temperature", 0.0, 2.0, 0.0, 0.1)
     max_tokens = st.slider("Output token limit", 1, 8192, 512)
     top_p = st.slider("Top-P", 0.0, 1.0, 0.9, 0.05)
