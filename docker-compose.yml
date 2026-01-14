@@ -7,10 +7,6 @@ services:
       - OLLAMA_HOST=https://ollama.irc-enter.tech
     networks:
       - internal-shared
-    deploy:
-      resources:
-        limits:
-          memory: 2G
 
 networks:
   internal-shared:
