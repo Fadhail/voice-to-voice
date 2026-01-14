@@ -72,6 +72,47 @@ with st.sidebar:
     voice_speed = st.slider("Kecepatan Suara (%)", -50, 100, 25, step=5)
     
     st.divider()
+    st.header("Data Management")
+    
+    with st.expander("📝 Edit Data Siswa"):
+        try:
+            with open('data_siswa.json', 'r') as f:
+                current_data = json.load(f)
+            
+            json_str = json.dumps(current_data, indent=2, ensure_ascii=False)
+            edited_json = st.text_area(
+                "Edit JSON Data",
+                value=json_str,
+                height=300,
+                help="Edit data siswa dalam format JSON"
+            )
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("💾 Simpan Data", use_container_width=True):
+                    try:
+                        new_data = json.loads(edited_json)
+                        with open('data_siswa.json', 'w') as f:
+                            json.dump(new_data, f, indent=2, ensure_ascii=False)
+                        st.cache_data.clear()
+                        st.success("✅ Data berhasil disimpan!")
+                        st.rerun()
+                    except json.JSONDecodeError as e:
+                        st.error(f"❌ Format JSON tidak valid: {e}")
+            
+            with col2:
+                if st.button("🔄 Reset", use_container_width=True):
+                    st.rerun()
+                    
+        except FileNotFoundError:
+            st.warning("File data_siswa.json tidak ditemukan")
+            if st.button("📁 Buat File Baru"):
+                with open('data_siswa.json', 'w') as f:
+                    json.dump({}, f, indent=2)
+                st.success("File berhasil dibuat!")
+                st.rerun()
+    
+    st.divider()
     if st.button("Hapus Riwayat Chat"):
         st.session_state.messages = []
         st.rerun()
